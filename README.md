@@ -1,35 +1,50 @@
 ## UniFi API browser
 
 This tool allows you to browse data exposed through the UniFi Controller API, developed using PHP, JavaScript,
-and the [Bootstrap](http://getbootstrap.com/) CSS framework. It comes bundled with a **PHP class for access to the UniFi Controller API**, 
-which supports [more API endpoints](https://github.com/Art-of-WiFi/UniFi-API-client#functionsmethods-supported) than the UniFi API browser tool.
+and the [Bootstrap](http://getbootstrap.com/) CSS framework. It comes bundled with two API clients:
 
-If you plan on creating your own PHP code to interact with the UniFi controller API, it is recommended to use the
-standalone version of the API client class, which can be found at https://github.com/Art-of-WiFi/UniFi-API-client.
-There, you will also find examples and detailed instructions on how to use it.
+- The **classic PHP API client** ([UniFi-API-client](https://github.com/Art-of-WiFi/UniFi-API-client)) for
+  username/password authentication against the classic UniFi Controller API
+- The **official UniFi Network Application API client** ([unifi-network-application-api-client](https://github.com/Art-of-WiFi/php-api-client-for-official-UniFi-networking-API-Saloon-based))
+  for API key authentication against the official UniFi Network Application API
 
 Please keep the following in mind when using the UniFi API browser:
 
 - The tool does not support all available data collections and API endpoints. See the list below for those currently
   supported.
-- Currently, versions 5.X.X, 6.X.X, 7.X.X, 8.X.X, and 9.X.X of the UniFi Controller/Networking Application software are
-  supported (version **9.4.19** has been confirmed to work)
-- Network Application on UniFi OS-based consoles and servers is also supported, same versions as above
+- **Classic controllers**: versions 5.X.X, 6.X.X, 7.X.X, 8.X.X, and 9.X.X of the UniFi Controller/Networking Application
+  software are supported (version **9.4.19** has been confirmed to work)
+- **Official API controllers**: requires a UniFi Network Application that supports API key authentication
+- Network Application on UniFi OS-based consoles and servers is also supported
 - When accessing UniFi OS-based controllers through this tool, please read the remarks regarding UniFi OS support
 - Please read the Security Notice before installing this tool.
 
 
-### Upgrading from 1.x to 2.x
+### Upgrading from 2.x to 3.x
 
-Because the structure of the configuration file has changed, we recommend creating a fresh install when upgrading from
-1.x to 2.x.
+Version 3.0.0 introduces the following major changes:
+
+- **PHP 8.1 or higher is now required** (previously PHP 7.4)
+- **Official UniFi Network Application API support**: you can now configure controllers that use API key
+  authentication alongside the classic username/password controllers
+- **Twig 3.x** replaces Twig 2.x (end of life)
+- **Kint 5.x** replaces Kint 3.x for PHP 8.1+ compatibility
+- **Auto-select single site**: when a controller has only one site, it is automatically selected
+- **Custom menu entries** added in `config.php` only apply to classic controllers and are hidden when an official
+  API controller is selected
+
+When upgrading, update your `config/config.php` based on the new `config/config-template.php` file. Your existing
+classic controller entries will continue to work without changes. To add official API controllers, see the
+Configuration section below.
 
 
 ### Features
 
 The UniFi API browser tool offers the following features:
 - Browse data collections and API endpoints exposed by the UniFi Controller API in an easy manner
-- Switch between sites managed by the connected controller
+- Support for both **classic** (username/password) and **official** (API key) controller authentication
+- Switch between multiple controllers of different types from the dropdown menu
+- Switch between sites managed by the connected controller (auto-selects when only one site is available)
 - Switch between output formats (currently **JSON**, **JSON highlighted**, **PHP array**, **interactive**, and
   **PHP array, highlighted**)
 - Copy the results to clipboard (this is only supported with the JSON output format and will fail gracefully with
@@ -45,6 +60,46 @@ The UniFi API browser tool offers the following features:
 
 
 ### Data collections/API endpoints currently implemented in the API browser
+
+#### Official API controllers
+
+- Application
+  - Application info
+- Sites
+  - List sites
+- Devices
+  - List adopted devices
+  - List pending devices
+  - Device statistics
+- Clients
+  - List clients
+- Networks
+  - List networks
+- WiFi
+  - List WiFi broadcasts
+- Hotspot
+  - List vouchers
+- Firewall
+  - List firewall zones
+  - List firewall policies
+  - List ACL rules
+  - List traffic matching lists
+  - List DNS policies
+- Switching
+  - List switch stacks
+  - List MC-LAG domains
+  - List LAGs
+- Supporting Resources
+  - WAN interfaces
+  - Site-to-site VPN tunnels
+  - VPN servers
+  - RADIUS profiles
+  - Device tags
+  - DPI categories
+  - DPI applications
+  - Countries
+
+#### Classic controllers
 
 - Configuration
   - list sites on this controller
@@ -113,7 +168,7 @@ though.
 
 ### Requirements
 
-- A web server with PHP (7.4.0 or higher) and the php-curl module installed
+- A web server with PHP (8.1.0 or higher) and the php-curl module installed
 - Network connectivity between this web server and the server (and port) where the UniFi controller is running (in case
   you are seeing errors, please check out [this issue](https://github.com/Art-of-WiFi/UniFi-API-browser/issues/4))
 - Web browsers accessing this tool should have full internet access because several CSS and JS files are loaded from
@@ -148,13 +203,47 @@ Docker-based installs.
 
 ### Configuration
 
-- Credentials for access to the UniFi Controller API are configured in the file named `config/config-template.php` which
-  should be copied/renamed to `config/config.php`
-- Starting with version 1.0.3, you can store **multiple controller configurations** in an array inside the
-  `config/config.php` file
-- Please refer to the `config/config-template.php` file for further configuration instructions
-- Starting with API browser tool version 2.0.0, you can restrict access to the tool by creating user accounts and
-  passwords. Please refer to the instructions in the `config/users-template.php` file for further details
+- Copy `config/config-template.php` to `config/config.php` and edit it with your controller details
+- You can configure **multiple controllers** of **different types** in the `$controllers` array
+- Two controller types are supported:
+  - **`classic`** (default): uses username/password authentication with the classic UniFi API client
+  - **`official`**: uses API key authentication with the official UniFi Network Application API client
+
+#### Classic controller example
+
+```php
+[
+    'user'     => 'admin',
+    'password' => 'your-password',
+    'url'      => 'https://192.168.1.1:8443',
+    'name'     => 'Home Controller',
+    'type'     => 'classic',
+],
+```
+
+#### Official API controller example
+
+To use the official API, you need to generate an API key in the UniFi Network Application settings
+(Settings > System > Advanced > API). Then add a controller entry like this:
+
+```php
+[
+    'api_key'    => 'your-api-key-here',
+    'url'        => 'https://192.168.1.1',
+    'name'       => 'Office (Official API)',
+    'type'       => 'official',
+    'verify_ssl' => false, // optional, set to false to disable SSL verification (default: true)
+],
+```
+
+Note: official API controllers do **not** require a username or password, only an API key.
+The `type` field must be set to `'official'` for API key authentication to work.
+
+#### Additional configuration
+
+- If the `type` field is omitted from a controller entry, it defaults to `classic` for backward compatibility
+- You can restrict access to the tool by creating user accounts and passwords. Please refer to the instructions
+  in the `config/users-template.php` file for further details
 - After following these steps, you can open the tool in your browser (assuming you installed it in the root folder of
   your web server as suggested above) by going to this url: `http(s)://<server IP address>/UniFi-API-browser/`
 
@@ -220,6 +309,8 @@ $collections = array_merge($collections, [
 
 Note: for a `collection` type menu option the `type`, `label`, `method`, and `params` "properties" are required.
 
+Note: custom menu entries only apply to **classic** controllers. They are automatically hidden when an **official** API controller is selected.
+
 This is what the result looks like for the above example:
 
 ![Custom sub menu](https://user-images.githubusercontent.com/12016131/69611554-4fb4a400-102e-11ea-9175-99618c1e1f98.png "Custom sub menu")
@@ -251,9 +342,9 @@ Other included libraries:
 - Bootswatch themes (version 4.5.3) https://bootswatch.com
 - Font Awesome icons (version 5.15.1) https://fontawesome.com
 - jQuery (version 3.5.1) https://jquery.com
-- Twig template engine (version 1.44.7) https://twig.symfony.com
+- Twig template engine (version 3.x) https://twig.symfony.com
 - Highlight.js (version 10.4.1) https://highlightjs.org
-- Kint (version 3.3) https://kint-php.github.io/kint
+- Kint (version 5.x) https://kint-php.github.io/kint
 - clipboard.js (version 2.0.6) https://clipboardjs.com
 - Moment.js (version 2.29.1) https://momentjs.com
 

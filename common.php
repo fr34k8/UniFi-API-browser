@@ -11,7 +11,7 @@ require_once 'vendor/autoload.php';
 use UniFi_API\Client as ApiClient;
 use ArtOfWiFi\UnifiNetworkApplicationApi\UnifiConnector;
 
-const TOOL_VERSION = '2.1.0';
+const TOOL_VERSION = '3.0.0';
 
 /**
  * Gather some basic information for the About modal.

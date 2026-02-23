@@ -98,9 +98,15 @@ if (!empty($_SESSION['controller'])) {
                 }
 
                 /**
-                 * No version detection for the official API — store 'official' as a marker.
+                 * Fetch the application version from the official API.
                  */
-                $_SESSION['controller']['detected_version'] = 'official';
+                try {
+                    $app_info_response = $client->applicationInfo()->get();
+                    $app_info          = $app_info_response->json();
+                    $_SESSION['controller']['detected_version'] = $app_info['applicationVersion'] ?? 'unknown';
+                } catch (\Exception $e) {
+                    $_SESSION['controller']['detected_version'] = 'unknown';
+                }
             } catch (\Saloon\Exceptions\Request\ClientException $e) {
                 $results['state']   = 'error';
                 $results['message'] = 'Official API client error: ' . $e->getMessage();

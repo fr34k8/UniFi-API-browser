@@ -64,6 +64,12 @@ if ($controller_type === 'official') {
 }
 
 /**
+ * remember the number of built-in collections before loading config.php,
+ * so we can strip any custom menu entries for official controllers later
+ */
+$builtin_collection_count = count($collections);
+
+/**
  * initialize the Twig loader early on in case we need to render the error page
  */
 $loader = new FilesystemLoader('templates');
@@ -81,6 +87,14 @@ $twig   = new Environment($loader);
  */
 if (is_file('config/config.php') && is_readable('config/config.php')) {
     require_once 'config/config.php';
+
+    /**
+     * strip any custom menu entries added in config.php for official controllers,
+     * since they only support classic API client methods
+     */
+    if ($controller_type === 'official' && count($collections) > $builtin_collection_count) {
+        $collections = array_slice($collections, 0, $builtin_collection_count);
+    }
 } else {
     /**
      * render the config error page
