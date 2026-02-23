@@ -378,7 +378,7 @@ The controller selection dropdown menu:
 
 Now with different controller types:
 
-
+![Multiple Controller Types]([https://user-images.githubusercontent.com/12016131/67584184-59a46800-f74d-11e9-88b4-36e333f388a1.png](https://github.com/user-attachments/assets/a0c2f4d3-baa9-443e-87f4-f0da241287b4) "Multiple Controller Types")
 
 The site selection dropdown menu:
 
