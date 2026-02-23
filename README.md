@@ -398,11 +398,11 @@ Showing the site settings collection in interactive PHP format:
 
 Showing a collection from the Official API (initial page):
 
-
+<img width="1278" height="1107" alt="Image" src="https://github.com/user-attachments/assets/07338d06-935d-4e7b-9baa-273b7861c9cf" />
 
 Showing a collection from the Official API (all pages):
 
-
+<img width="1274" height="1088" alt="Image" src="https://github.com/user-attachments/assets/33ec86ae-976f-4a25-8fad-d34e6b270963" />
 
 The "About" modal:
 
