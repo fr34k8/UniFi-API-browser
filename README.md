@@ -5,7 +5,7 @@ and the [Bootstrap](http://getbootstrap.com/) CSS framework. It comes bundled wi
 
 - The **classic PHP API client** ([UniFi-API-client](https://github.com/Art-of-WiFi/UniFi-API-client)) for
   username/password authentication against the classic UniFi Controller API
-- The **official UniFi Network Application API client** ([unifi-network-application-api-client](https://github.com/Art-of-WiFi/php-api-client-for-official-UniFi-networking-API-Saloon-based))
+- The **official UniFi Network Application API client** ([unifi-network-application-api-client](https://github.com/Art-of-WiFi/unifi-network-application-api-client))
   for API key authentication against the official UniFi Network Application API
 
 Please keep the following in mind when using the UniFi API browser:
